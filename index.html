@@ -1,0 +1,160 @@
+//
+//  ContentView.swift
+//  eddie
+//
+//  Created by Gaia Giordano on 19/10/26.
+//
+
+import SwiftUI
+
+struct ContentView: View {
+    // Variabile per gestire la schermata di benvenuto iniziale
+    @State private var hasStarted = false
+    
+    @State private var currentQuestionIndex = 0
+    @State private var isFinished = false
+    @State private var showError = false
+
+    // Le tue 5 domande personalizzate
+    let quizData = [
+        (question: "1. When did we first started talking?", options: ["June", "July", "August"], correct: 1),
+        (question: "2. Which sport are we going to do together in Scania?", options: ["Classical ballet", "Golf", "Polo"], correct: 1),
+        (question: "3. How much do you think your girlfriend loves you from 1 to 10? ", options: ["2", "7", "10^n"], correct: 2),
+        (question: "4. What's my favourite nickname for you?", options: ["Ikea guy", "Meatball guy", "Swedish Ken"], correct: 0),
+        (question: "6. If I were an animal, which one would I wanna be?", options: ["Octopus", "Horse", "Dolphin"], correct: 1),
+        (question: "7. Do you remember my best friend's names ?", options: ["Stefania, Greta, Gaia, Alessia, Marianna ", "Stefania, Greta, Eugenia, Ursula", "Greta, Stefania, Alessia"], correct: 0),
+        (question: "5. When are we going to see eachother again in Scania?", options: ["10 November", "14 November", "12 November"], correct: 2)
+    ]
+
+    // Il tuo messaggio finale segreto
+    let finalMessage = "This past month went by so fast and I've loved every second of it.\n I hate being this far from you all the time but for you it's worth it and we'll see eachother in no time now. \n Eddie, I fall more and more in love with you with each passing day and you make me feel the luckiest woman on earth. ❤️ "
+    
+
+    var body: some View {
+        ZStack {
+            // Sfumatura di sfondo romantica
+            LinearGradient(colors: [.blue.opacity(0.3), .yellow.opacity(0.3)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .ignoresSafeArea()
+
+            VStack(spacing: 20) {
+                if !hasStarted {
+                    // --- SCHERMATA INIZIALE CON LE ISTRUZIONI ---
+                    VStack(spacing: 25) {
+                        Text("THE DATE QUIZ 🥛🌋")
+                            .font(.largeTitle)
+                            .bold()
+                            .foregroundColor(.indigo)
+                            .multilineTextAlignment(.center)
+                        
+                        // Box con le istruzioni
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("HELLO EDDIE, WELCOME TO THE DATE QUIZ!!! ")
+                                .font(.headline)
+                                .foregroundColor(.teal)
+                            
+                            Text("Since this special date is gonna be spend online, here it a personalised game just for you. I've collected a few questions and you'll have to anwer correcly. \nOnce you've anwered all of them right, you'll find the prize of this DATE QUIZ (the real prize is your girlfriend but you'll have to wait a few more weeks for that).")
+                            
+                            
+                        }
+                        .padding(20)
+                        .background(Color.white)
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
+
+                        // Bottone per iniziare
+                        Button(action: {
+                            hasStarted = true
+                        }) {
+                            Text("Click here to start the quiz ")
+                                .font(.title3)
+                                .bold()
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.teal)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                        }
+                        .padding(.top, 10)
+                    }
+                    .padding()
+
+                } else if isFinished {
+                    // --- Schermata finale con il messaggio ---
+                    VStack(spacing: 15) {
+                        Text("🎉 Good job min älskling! You've unlocked the message! 🎉")
+                            .font(.title2)
+                            .bold()
+                            .foregroundColor(.blue)
+                        
+                        Text(finalMessage)
+                            .font(.body)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                        
+                        Link("Click to see the prize", destination: URL(string: "https://puttle.golf")!)
+                                .font(.headline)
+                                .padding()
+                                .background(Color.teal)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                    }
+                    .padding()
+                } else {
+                    // --- Schermata del quiz ---
+                    Text("THE DATE QUIZ 🥛🌋")
+                        .font(.largeTitle)
+                        .bold()
+                        .foregroundColor(.indigo)
+                        .padding(.bottom, 5)
+
+                    Text(quizData[currentQuestionIndex].question)
+                        .font(.title)
+                        .multilineTextAlignment(.center)
+                        .padding()
+
+                    // Pulsanti delle opzioni
+                    let currentQ = quizData[currentQuestionIndex]
+                    ForEach(0..<currentQ.options.count, id: \.self) { index in
+                        Button(action: {
+                            if index == currentQ.correct {
+                                showError = false
+                                if currentQuestionIndex < quizData.count - 1 {
+                                    currentQuestionIndex += 1
+                                } else {
+                                    isFinished = true
+                                }
+                            } else {
+                                showError = true
+                            }
+                        }) {
+                            Text(currentQ.options[index])
+                                .font(.headline)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.teal)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                        }
+                    }
+
+                    if showError {
+                        Text("Nein! Try again! ")
+                            .foregroundColor(.red)
+                            .font(.headline)
+                            .padding(.top, 10)
+                    }
+                }
+            }
+            .padding()
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
